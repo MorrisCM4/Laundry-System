@@ -8,8 +8,7 @@ import Logout from "../../Logout/Logout";
 import "./headerCoord.scss";
 import { oldOrder } from "../../../../services/global";
 
-// import { ReactComponent as Logo } from '../../../../utils/img/Logo/logoMasterClean.svg';
-
+import { ReactComponent as Logo } from "../../../../utils/img/Logo/logoMorris.svg";
 const HeaderUser = () => {
   const userState = useSelector((store) => store.user.infoUsuario);
   const location = useLocation();
@@ -123,8 +122,8 @@ const HeaderUser = () => {
   return (
     <header className="header-general">
       <div className="logo">
-        {/* <Logo className="svg-logo" /> */}
-        <h1>{InfoNegocio?.name}</h1>
+        <Logo className="svg-logo" />
+        {/* <h1>{InfoNegocio?.name}</h1> */}
       </div>
       <button type="button" className="hamburger" onClick={toggleNavBar}>
         <div className="line" />
