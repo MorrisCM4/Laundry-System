@@ -1,6 +1,6 @@
 export const timeZone = "America/Mexico_City"; //
 // Mostrar Opcion de Registrar Ordenes Antiguas
-export const oldRecords = true;
+export const oldOrder = true;
 // Tipo de Moneda
 export const tipoMoneda = "MXN"; // PEN
 // Formato de la moneda (separacion de miles - decimales) segun la configuracion regional
