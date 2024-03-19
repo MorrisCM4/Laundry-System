@@ -399,8 +399,8 @@ const CuadreCaja = () => {
         egresos: { delivery, gastos },
         ingresos: {
           efectivo: pedidosPagadosEfectivo,
-          tarjeta: pedidosPagadosTransferencia,
-          transferencia: pedidosPagadosTarjeta,
+          tarjeta: pedidosPagadosTarjeta,
+          transferencia: pedidosPagadosTransferencia,
         },
         estado:
           stateCuadre > 0 ? "Sobra" : stateCuadre < 0 ? "Falta" : "Cuadro",
