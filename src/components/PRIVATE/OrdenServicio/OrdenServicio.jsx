@@ -903,17 +903,12 @@ const OrdenServicio = ({
             <div className="info-t">
               <div className="title">
                 <Logo className="ico-logo" />
-                {/* <h1>{InfoNegocio?.name}</h1> */}
-                {/* <h2>LAVANDERIA</h2> */}
                 {Object.keys(InfoNegocio).length > 0 ? (
                   <h3>
                     {DiasAttencion(InfoNegocio?.horario.dias)}
                     <br />
                     {HoraAttencion(InfoNegocio?.horario.horas)}
                   </h3>
-                ) : null}
-                {InfoNegocio?.numero?.state ? (
-                  <h3>Cel.: {InfoNegocio?.numero?.info}</h3>
                 ) : null}
               </div>
             </div>

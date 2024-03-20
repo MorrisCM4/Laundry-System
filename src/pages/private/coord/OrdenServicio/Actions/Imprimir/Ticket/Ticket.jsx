@@ -13,7 +13,6 @@ import "./ticket.scss";
 import Pet from "./pet.jpg";
 import AhorroPet from "./petAhorro.jpg";
 import { ReactComponent as Logo } from "../../../../../../../utils/img/Logo/logoMorris.svg";
-
 import moment from "moment";
 import axios from "axios";
 import {
@@ -153,7 +152,7 @@ const Ticket = React.forwardRef((props, ref) => {
                 <div className="data-text">
                   {/* <h1>LAVANDERIA</h1>
                   <h1 className="name">{InfoNegocio?.name}</h1> */}
-                  {InfoNegocio?.numero?.state ? (
+                  {InfoNegocio.numero.state ? (
                     <span>telf : {InfoNegocio?.numero?.info}</span>
                   ) : null}
                 </div>
