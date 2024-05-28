@@ -27,7 +27,7 @@ const Maintenance = ({ info, cancelarEdit }) => {
   const formik = useFormik({
     initialValues: {
       name: "",
-      tipo: "",
+      tipo: "Servicio",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -40,6 +40,7 @@ const Maintenance = ({ info, cancelarEdit }) => {
   });
 
   const handleNewServicio = (data) => {
+    let confirmationEnabled = true;
     modals.openConfirmModal({
       title: "Registro de Categoria",
       centered: true,
@@ -50,14 +51,18 @@ const Maintenance = ({ info, cancelarEdit }) => {
       confirmProps: { color: "green" },
 
       onConfirm: () => {
-        dispatch(addCategoria(data));
-        formik.resetForm();
-        Notify("Categoria Agregado Exitosamente", "", "success");
+        if (confirmationEnabled) {
+          confirmationEnabled = false;
+          dispatch(addCategoria(data));
+          formik.resetForm();
+          Notify("Categoria Agregado Exitosamente", "", "success");
+        }
       },
     });
   };
 
   const handleUpdateServicio = (data) => {
+    let confirmationEnabled = true;
     modals.openConfirmModal({
       title: "Actualizacion de Categoria",
       centered: true,
@@ -68,12 +73,15 @@ const Maintenance = ({ info, cancelarEdit }) => {
       confirmProps: { color: "green" },
 
       onConfirm: () => {
-        dispatch(
-          updateCategoria({ idCategoria: info._id, categoriaData: data })
-        );
-        Notify("Categoria Actualizado Exitosamente", "", "success");
-        formik.resetForm();
-        cancelarEdit();
+        if (confirmationEnabled) {
+          confirmationEnabled = false;
+          dispatch(
+            updateCategoria({ idCategoria: info._id, categoriaData: data })
+          );
+          Notify("Categoria Actualizado Exitosamente", "", "success");
+          formik.resetForm();
+          cancelarEdit();
+        }
       },
     });
   };
@@ -84,6 +92,8 @@ const Maintenance = ({ info, cancelarEdit }) => {
         name: info.name,
         tipo: info.tipo,
       });
+    } else {
+      formik.resetForm();
     }
   }, [info]);
 
@@ -117,9 +127,8 @@ const Maintenance = ({ info, cancelarEdit }) => {
                 name="tipo"
                 size="sm"
                 label="Tipo"
-                readOnly={isEdit}
-                disabled={isEdit}
-                value={formik.values.tipo}
+                readOnly
+                defaultValue={formik.values.tipo}
                 onChange={(e) => {
                   formik.setFieldValue("tipo", e);
                 }}

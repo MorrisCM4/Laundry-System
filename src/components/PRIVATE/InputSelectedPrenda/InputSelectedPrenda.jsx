@@ -35,7 +35,7 @@ const InputSelectedPrenda = ({ listenClick, tabI, disabled }) => {
       const categoria = mapeoCategorias[servicio.idCategoria];
       // Excluir si el servicio es "Delivery" y su categoría es de nivel "primario" o si el estado es false
       return (
-        !(servicio.nombre === "Delivery" && categoria.nivel === "primario") &&
+        !(servicio.nombre === "Delivery" && categoria?.nivel === "primario") &&
         servicio.estado
       );
     });
@@ -51,12 +51,16 @@ const InputSelectedPrenda = ({ listenClick, tabI, disabled }) => {
       };
     });
 
-    setData(serviciosDB);
+    const infoOrdenada = serviciosDB.sort((a, b) =>
+      a.label.localeCompare(b.label)
+    );
+
+    setData(infoOrdenada);
   }, [iServicios]);
 
   return (
     <Select
-      label="Escoga Prenda :"
+      label="Escoja Servicio :"
       placeholder="Escoga para agregar"
       itemComponent={SelectItem}
       data={data}

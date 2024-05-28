@@ -1,30 +1,31 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { NumberInput } from '@mantine/core';
+import { NumberInput, TextInput } from "@mantine/core";
 
-import { Field, Form, Formik } from 'formik';
-import * as Yup from 'yup';
+import { Field, Form, Formik } from "formik";
+import * as Yup from "yup";
 
 // import Factura from "../../../../../Data/ReusableComponent/Factura/Factura";
-import OrdenServicio from '../../../../../../components/PRIVATE/OrdenServicio/OrdenServicio';
-import LoaderSpiner from '../../../../../../components/LoaderSpinner/LoaderSpiner';
-import { DateCurrent } from '../../../../../../utils/functions';
-import './delivery.scss';
+import OrdenServicio from "../../../../../../components/PRIVATE/OrdenServicio/OrdenServicio";
+import LoaderSpiner from "../../../../../../components/LoaderSpinner/LoaderSpiner";
+import { DateCurrent } from "../../../../../../utils/functions";
+import "./delivery.scss";
 
-import { ReactComponent as Moto } from '../../../../../../utils/img/Delivery/moto.svg';
-import { ReactComponent as Taxi } from '../../../../../../utils/img/Delivery/taxi-lateral.svg';
+import { ReactComponent as DeliveryPropio } from "../../../../../../utils/img/Delivery/delivery-propio.svg";
+import { ReactComponent as DeliveryPrivado } from "../../../../../../utils/img/Delivery/delivery-privado.svg";
 
-import { Text } from '@mantine/core';
-import { modals } from '@mantine/modals';
-import { useDispatch, useSelector } from 'react-redux';
-import { AddOrdenServices } from '../../../../../../redux/actions/aOrdenServices';
+import { Text } from "@mantine/core";
+import { modals } from "@mantine/modals";
+import { useDispatch, useSelector } from "react-redux";
+import { AddOrdenServices } from "../../../../../../redux/actions/aOrdenServices";
 
-import { setLastRegister } from '../../../../../../redux/states/service_order';
-import { PrivateRoutes } from '../../../../../../models';
-import { simboloMoneda } from '../../../../../../services/global';
+import { setLastRegister } from "../../../../../../redux/states/service_order";
+import { PrivateRoutes } from "../../../../../../models";
+import { simboloMoneda } from "../../../../../../services/global";
+import ValidIco from "../../../../../../components/ValidIco/ValidIco";
 
 const Delivery = () => {
   const dispatch = useDispatch();
@@ -33,8 +34,6 @@ const Delivery = () => {
   const infoCodigo = useSelector((state) => state.codigo.infoCodigo);
   const { lastRegister } = useSelector((state) => state.orden);
 
-  const { lastCuadre, cuadreActual } = useSelector((state) => state.cuadre);
-  const infoPrendas = useSelector((state) => state.prenda.infoPrendas);
   const { InfoImpuesto } = useSelector((state) => state.modificadores);
 
   const InfoUsuario = useSelector((state) => state.user.infoUsuario);
@@ -44,34 +43,34 @@ const Delivery = () => {
 
   const [redirect, setRedirect] = useState(false);
 
-  const [infoDelivery, setInfoDelivery] = useState();
+  const [infoGastoByDelivery, setInfoGastoByDelivery] = useState();
+  const [nameDefault, setNameDefault] = useState();
 
-  const InfoServicios = useSelector((state) => state.servicios.listServicios);
-  const InfoCategorias = useSelector((state) => state.categorias.listCategorias);
+  const infoServiceDelivery = useSelector(
+    (state) => state.servicios.serviceDelivery
+  );
 
-  const getInfoDelivery = () => {
-    const ICategory = InfoCategorias.find((cat) => cat.nivel === 'primario');
-    const IService = InfoServicios.find(
-      (service) => service.idCategoria === ICategory._id && service.nombre === 'Delivery'
-    );
-
-    return IService;
-  };
+  const infoTipoGastoDeliveryRecojo = useSelector(
+    (state) => state.tipoGasto.iDeliveryRecojo
+  );
 
   // Reservar
   const handleReservar = (values) => {
-    const infoDelivery = {
-      name: values.name,
-      descripcion: `[${String(infoCodigo.codActual).padStart(4, '0')}] Delivery recojo en ${values.tipoDelivery}`,
-      fecha: DateCurrent().format4,
-      hora: DateCurrent().format3,
+    const infoGastoByDelivery = {
+      idTipoGasto: infoTipoGastoDeliveryRecojo._id,
+      tipo: infoTipoGastoDeliveryRecojo.name,
+      motivo: `[${String(infoCodigo.codActual).padStart(
+        4,
+        "0"
+      )}] Delivery RECOJO en Transporte ${values.tipoDelivery} - ${
+        values.name
+      }`,
+      date: {
+        fecha: DateCurrent().format4,
+        hora: DateCurrent().format3,
+      },
       monto: values.price,
       idUser: InfoUsuario._id,
-      idCuadre: cuadreActual?.saved
-        ? lastCuadre?._id === cuadreActual?._id && lastCuadre?.infoUser._id === cuadreActual?.infoUser._id
-          ? cuadreActual?._id
-          : ''
-        : '',
     };
 
     const infoOrden = {
@@ -80,18 +79,18 @@ const Delivery = () => {
         fecha: DateCurrent().format4,
         hora: DateCurrent().format3,
       },
-      Modalidad: 'Delivery',
-      Nombre: infoDelivery.name,
+      Modalidad: "Delivery",
+      Nombre: values.name,
       Items: [
         {
-          identificador: getInfoDelivery()._id,
-          tipo: 'servicio',
+          identificador: infoServiceDelivery._id,
+          tipo: "servicio",
           cantidad: 1,
-          item: 'Delivery',
-          simboloMedida: 'vj',
-          descripcion: 'Recojo y Entrega',
-          price: getInfoDelivery().precioVenta,
-          total: getInfoDelivery().precioVenta,
+          item: infoServiceDelivery.nombre,
+          simboloMedida: infoServiceDelivery.simboloMedida,
+          descripcion: "Recojo y Entrega",
+          price: infoServiceDelivery.precioVenta,
+          total: infoServiceDelivery.precioVenta,
           disable: {
             cantidad: true,
             item: true,
@@ -101,22 +100,19 @@ const Delivery = () => {
           },
         },
       ],
-      celular: '',
-      Pago: '',
-      ListPago: [],
+      celular: "",
       datePrevista: {
-        fecha: '',
-        hora: '',
+        fecha: "",
+        hora: "",
       },
       dateEntrega: {
-        fecha: '',
-        hora: '',
+        fecha: "",
+        hora: "",
       },
       descuento: 0,
-      estadoPrenda: 'pendiente',
-      estado: 'reservado',
-      //
-      dni: '',
+      estadoPrenda: "pendiente",
+      estado: "reservado",
+      dni: "",
       factura: false,
       subTotal: 0,
       cargosExtras: {
@@ -134,41 +130,45 @@ const Delivery = () => {
         },
       },
       totalNeto: 0,
-      modeRegistro: 'nuevo',
-      modoDescuento: 'Puntos',
+      modeRegistro: "nuevo",
+      modoDescuento: "Puntos",
       gift_promo: [],
       attendedBy: {
         name: InfoUsuario.name,
         rol: InfoUsuario.rol,
       },
-      typeRegistro: 'normal',
+      typeRegistro: "normal",
     };
 
     dispatch(
       AddOrdenServices({
         infoOrden,
         rol: InfoUsuario.rol,
-        infoDelivery,
+        infoPago: [],
+        infoGastoByDelivery,
       })
     ).then((res) => {
       if (res.payload) {
-        navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.LIST_ORDER_SERVICE}`);
+        navigate(
+          `/${PrivateRoutes.PRIVATE}/${PrivateRoutes.LIST_ORDER_SERVICE}`
+        );
       }
     });
   };
 
   // Registrar
   const handleRegistrar = (info) => {
-    const { infoOrden } = info;
-    if (infoDelivery) {
+    const { infoOrden, infoPago, rol } = info;
+    if (infoGastoByDelivery) {
       dispatch(
         AddOrdenServices({
           infoOrden,
-          rol: InfoUsuario.rol,
-          infoDelivery: { ...infoDelivery, name: infoOrden.Nombre },
+          infoPago,
+          rol,
+          infoGastoByDelivery,
         })
       ).then((res) => {
-        if ('error' in res) {
+        if ("error" in res) {
           setRedirect(false);
         } else {
           setRedirect(true);
@@ -177,43 +177,57 @@ const Delivery = () => {
     }
   };
 
-  const handleGetInfoDelivery = (values) => {
-    const infoDelivery = {
-      name: values.name,
-      descripcion: `[${String(infoCodigo.codActual).padStart(4, '0')}] Delivery recojo en ${values.tipoDelivery}`,
-      fecha: DateCurrent().format4,
-      hora: DateCurrent().format3,
+  const handleGetInfoGastoByDelivery = (values) => {
+    const infoGastoByDeliveryRecojo = {
+      idTipoGasto: infoTipoGastoDeliveryRecojo._id,
+      tipo: infoTipoGastoDeliveryRecojo.name,
+      motivo: `[${String(infoCodigo.codActual).padStart(
+        4,
+        "0"
+      )}] Delivery RECOJO en Transporte ${values.tipoDelivery} - ${
+        values.name
+      }`,
+      date: {
+        fecha: DateCurrent().format4,
+        hora: DateCurrent().format3,
+      },
       monto: values.price,
       idUser: InfoUsuario._id,
-      idCuadre: cuadreActual?.saved
-        ? lastCuadre?._id === cuadreActual?._id && lastCuadre?.infoUser._id === cuadreActual?.infoUser._id
-          ? cuadreActual?._id
-          : ''
-        : '',
     };
 
-    setInfoDelivery(infoDelivery);
+    setNameDefault(values.name);
+    setInfoGastoByDelivery(infoGastoByDeliveryRecojo);
 
     setRegistrar(true);
   };
 
   const inputRef = useRef(null);
 
-  const openModal = (values) =>
+  const openModal = (values) => {
+    let confirmationEnabled = true;
+
     modals.openConfirmModal({
-      title: 'Reserva de Pedido',
+      title: "Reserva de Pedido",
       centered: true,
-      children: <Text size="sm">¿ Estas seguro que quieres RESERVAR este pedido ?</Text>,
-      labels: { confirm: 'Si', cancel: 'No' },
-      confirmProps: { color: 'green' },
+      children: (
+        <Text size="sm">¿ Estas seguro que quieres RESERVAR este pedido ?</Text>
+      ),
+      labels: { confirm: "Si", cancel: "No" },
+      confirmProps: { color: "green" },
       //onCancel: () => console.log("Cancelado"),
-      onConfirm: () => handleReservar(values),
+      onConfirm: () => {
+        if (confirmationEnabled) {
+          confirmationEnabled = false;
+          handleReservar(values);
+        }
+      },
     });
+  };
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Campo obligatorio'),
-    price: Yup.string().required('Campo obligatorio (numero)'),
-    tipoDelivery: Yup.string().required('Selecciona medio de transporte'),
+    name: Yup.string().required("Campo obligatorio"),
+    price: Yup.string().required("Campo obligatorio (numero)"),
+    tipoDelivery: Yup.string().required("Selecciona medio de transporte"),
   });
 
   useEffect(() => {
@@ -227,7 +241,9 @@ const Delivery = () => {
     if (lastRegister !== null) {
       const getId = lastRegister._id;
       dispatch(setLastRegister());
-      navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.IMPRIMIR_ORDER_SERVICE}/${getId}`);
+      navigate(
+        `/${PrivateRoutes.PRIVATE}/${PrivateRoutes.IMPRIMIR_ORDER_SERVICE}/${getId}`
+      );
     }
   }, [lastRegister]);
 
@@ -238,136 +254,158 @@ const Delivery = () => {
           {registrar === false ? (
             <Formik
               initialValues={{
-                name: '',
-                price: '',
-                tipoDelivery: '',
-                submitAction: '',
+                name: "",
+                price: "",
+                tipoDelivery: "",
+                submitAction: "",
               }}
               validationSchema={validationSchema}
-              onSubmit={(values, { setSubmitting, resetForm }) => {
-                if (values.submitAction === 'reservar') {
+              onSubmit={(values, { setSubmitting }) => {
+                if (values.submitAction === "reservar") {
                   openModal(values);
-                } else if (values.submitAction === 'registrar') {
-                  handleGetInfoDelivery(values);
+                } else if (values.submitAction === "registrar") {
+                  handleGetInfoGastoByDelivery(values);
                 }
                 setSubmitting(false);
               }}
             >
-              {({ values, errors, touched, isSubmitting, handleChange, handleSubmit, setFieldValue }) => (
+              {({
+                values,
+                errors,
+                touched,
+                isSubmitting,
+                handleChange,
+                handleSubmit,
+                setFieldValue,
+              }) => (
                 <Form onSubmit={handleSubmit} className="content-delivery">
-                  <fieldset className="checkbox-group">
-                    <legend className="checkbox-group-legend">Delivery</legend>
-                    <div className="checkbox">
-                      <label className="checkbox-wrapper">
-                        <Field
-                          type="radio"
-                          className="checkbox-input"
-                          name="tipoDelivery"
-                          value="Taxi"
-                          onClick={() => {
-                            // setFieldValue('price', +getProductValue('Delivery'));
-                            setShouldFocusInput(true);
-                          }}
-                        />
-                        <span className="checkbox-tile">
-                          <span className="checkbox-icon">
-                            <Taxi className="custom-icon" />
-                          </span>
-                          <span className="checkbox-label">Taxi</span>
-                        </span>
-                      </label>
-                    </div>
-                    <div className="checkbox">
-                      <label className="checkbox-wrapper">
-                        <Field
-                          type="radio"
-                          className="checkbox-input"
-                          name="tipoDelivery"
-                          value="Moto"
-                          onClick={() => {
-                            setFieldValue('price', '');
-                            setShouldFocusInput(true);
-                          }}
-                        />
-                        <span className="checkbox-tile">
-                          <span className="checkbox-icon">
-                            <Moto className="custom-icon" />
-                          </span>
-                          <span className="checkbox-label">Moto</span>
-                        </span>
-                      </label>
-                    </div>
-                    {errors.tipoDelivery && touched.tipoDelivery && (
-                      <div className="ico-req">
-                        <i className="fa-solid fa-circle-exclamation ">
-                          <div className="info-req" style={{ pointerEvents: 'none' }}>
-                            <span>{errors.tipoDelivery}</span>
-                          </div>
-                        </i>
-                      </div>
-                    )}
-                  </fieldset>
+                  <div className="head-info-cd">
+                    <h1>
+                      Orden de Servcio :&nbsp;
+                      {String(infoCodigo.codActual).padStart(6, "0")}
+                    </h1>
+                  </div>
                   <hr />
-                  <div className="code-reserva">
-                    <h2>Codigo de Reserva</h2>
-                    <h1>{String(infoCodigo.codActual).padStart(6, '0')}</h1>
-                  </div>
-                  <div className="selectBoxGroup">
-                    <div className="selectBox radio">
-                      <input type="checkbox" id={'radio-recojo'} readOnly={true} checked={true} />
-                      <label htmlFor={'radio-recojo'}>Recojo</label>
-                    </div>
-                  </div>
-                  <div className="infoDelivery">
-                    <div className="name-d">
-                      <div className="input-valid">
-                        <input
-                          type="text"
-                          name="name"
-                          onChange={handleChange}
-                          value={values.name}
-                          placeholder="Ingrese Nombre"
-                          autoComplete="off"
-                          ref={inputRef}
-                        />
-                        {errors.name && touched.name && (
-                          <div className="ico-req">
-                            <i className="fa-solid fa-circle-exclamation ">
-                              <div className="info-req" style={{ pointerEvents: 'none' }}>
-                                <span>{errors.name}</span>
-                              </div>
-                            </i>
+                  <div className="body-c-movilidad">
+                    <fieldset className="content-movilidad">
+                      <legend className="legend-c-movilidad">
+                        &nbsp;&nbsp;
+                        <span className="accion">&nbsp;(GASTO POR RECOJO)</span>
+                        &nbsp;&nbsp;
+                      </legend>
+                      <div className="group-fieldset">
+                        <fieldset className="checkbox-sub-group">
+                          <legend className="checkbox-group-legend">
+                            &nbsp;&nbsp;PAGADO&nbsp;&nbsp;
+                          </legend>
+                          <div className="checkbox">
+                            <label className="checkbox-wrapper">
+                              <Field
+                                type="radio"
+                                className="checkbox-input"
+                                name="tipoDelivery"
+                                value="Privado"
+                                onClick={() => {
+                                  setShouldFocusInput(true);
+                                  setFieldValue("price", "");
+                                }}
+                              />
+                              <span className="checkbox-tile">
+                                <span className="checkbox-icon">
+                                  <DeliveryPrivado className="custom-icon" />
+                                </span>
+                                <span className="checkbox-label">Privado</span>
+                              </span>
+                            </label>
                           </div>
-                        )}
+                        </fieldset>
+                        <fieldset className="checkbox-sub-group">
+                          <legend className="checkbox-group-legend">
+                            &nbsp;&nbsp;GRATIS&nbsp;&nbsp;
+                          </legend>
+                          <div className="checkbox">
+                            <label className="checkbox-wrapper">
+                              <Field
+                                type="radio"
+                                className="checkbox-input"
+                                name="tipoDelivery"
+                                value="Propio"
+                                onClick={() => {
+                                  setFieldValue("price", 0);
+                                  setShouldFocusInput(true);
+                                }}
+                              />
+                              <span className="checkbox-tile">
+                                <span className="checkbox-icon">
+                                  <DeliveryPropio className="custom-icon" />
+                                </span>
+                                <span className="checkbox-label">Propio</span>
+                              </span>
+                            </label>
+                          </div>
+                        </fieldset>
                       </div>
-                    </div>
-                    <div className="data-prices">
-                      <div className="input-valid">
-                        <NumberInput
-                          name="price"
-                          value={values.price}
-                          parser={(value) => value.replace(new RegExp(`${simboloMoneda}\\s?|(,*)`, 'g'), '')}
-                          formatter={(value) => {
-                            return Number.isNaN(parseFloat(value))
-                              ? ''
-                              : `${simboloMoneda} ${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
-                          }}
-                          placeholder="Ingrese Monto"
-                          precision={2}
-                          step={0.05}
-                          hideControls={true}
-                          autoComplete="off"
-                          onChange={(value) => setFieldValue('price', value)}
-                        />
-                        {errors.price && touched.price && (
-                          <div className="ico-req">
-                            <i className="fa-solid fa-circle-exclamation ">
-                              <div className="info-req" style={{ pointerEvents: 'none' }}>
-                                <span>{errors.price}</span>
-                              </div>
-                            </i>
-                          </div>
-                        )}
+                      {errors.tipoDelivery && touched.tipoDelivery && (
+                        <div className="ico-req">
+                          <i className="fa-solid fa-circle-exclamation ">
+                            <div
+                              className="info-req"
+                              style={{ pointerEvents: "none" }}
+                            >
+                              <span>{errors.tipoDelivery}</span>
+                            </div>
+                          </i>
+                        </div>
+                      )}
+                    </fieldset>
+                    <div className="infoDelivery">
+                      <div className="b-inputs">
+                        <div className="input-info-required">
+                          <TextInput
+                            name="name"
+                            size="md"
+                            label="Nombres del Cliente :"
+                            autoComplete="off"
+                            onChange={handleChange}
+                            ref={inputRef}
+                            value={values.name}
+                          />
+                          {errors.name &&
+                            touched.name &&
+                            ValidIco({ mensaje: errors.name })}
+                        </div>
+                        <div className="input-info-required">
+                          <NumberInput
+                            name="price"
+                            label="Gasto por Delivery :"
+                            size="md"
+                            value={values.price}
+                            parser={(value) =>
+                              value.replace(
+                                new RegExp(`${simboloMoneda}\\s?|(,*)`, "g"),
+                                ""
+                              )
+                            }
+                            formatter={(value) => {
+                              return Number.isNaN(parseFloat(value))
+                                ? ""
+                                : `${simboloMoneda} ${value}`.replace(
+                                    /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+                                    ","
+                                  );
+                            }}
+                            placeholder="Ingrese Monto"
+                            precision={2}
+                            step={0.05}
+                            disabled={values.tipoDelivery === "Propio"}
+                            hideControls={true}
+                            autoComplete="off"
+                            onChange={(value) => setFieldValue("price", value)}
+                          />
+                          {errors.price &&
+                            touched.price &&
+                            ValidIco({ mensaje: errors.price })}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -376,14 +414,14 @@ const Delivery = () => {
                       type="submit"
                       className="btn-saved"
                       disabled={isSubmitting}
-                      onClick={() => setFieldValue('submitAction', 'reservar')}
+                      onClick={() => setFieldValue("submitAction", "reservar")}
                     >
                       Reservar
                     </button>
                     <button
                       type="submit"
                       className="btn-saved"
-                      onClick={() => setFieldValue('submitAction', 'registrar')}
+                      onClick={() => setFieldValue("submitAction", "registrar")}
                     >
                       Registrar
                     </button>
@@ -392,19 +430,14 @@ const Delivery = () => {
               )}
             </Formik>
           ) : (
-            <div className="OS-content">
-              <div className="title-action">
-                <h1 className="elegantshadow">Agregando Factura</h1>
-                <h1 className="elegantshadow">- DELIVERY -</h1>
-              </div>
-              <OrdenServicio
-                mode={'Delivery'}
-                action={'Guardar'}
-                onAction={handleRegistrar}
-                onReturn={setRegistrar}
-                iDelivery={infoDelivery}
-              />
-            </div>
+            <OrdenServicio
+              titleMode="REGISTRAR"
+              mode={"Delivery"}
+              action={"Guardar"}
+              onAction={handleRegistrar}
+              onReturn={setRegistrar}
+              nameDefault={nameDefault}
+            />
           )}
         </div>
       ) : (

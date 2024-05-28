@@ -64,6 +64,7 @@ const Categorias = () => {
   };
 
   const handleDeleteCategoria = async (id) => {
+    let confirmationEnabled = true;
     setPActions(false);
     setAction("Add");
 
@@ -77,23 +78,22 @@ const Categorias = () => {
       confirmProps: { color: "red" },
       onCancel: handleCloseAction,
       onConfirm: async () => {
-        try {
-          const actionResult = await dispatch(deleteCategoria(id));
-          // // Si quieres manejar la respuesta exitosa
-          // const response = unwrapResult(actionResult);
-          // console.log('Categoría eliminada:', response);
-
-          unwrapResult(actionResult);
-          Notify("Categoria Elinado Exitosamente", "", "success");
-          handleCloseAction();
-        } catch (error) {
-          if (error.itemsAsociados) {
-            Notify("Error al Eliminar Categoria", "", "fail");
-            setItemsImp(error.itemsAsociados);
-            setPNotice(true);
+        if (confirmationEnabled) {
+          confirmationEnabled = false;
+          try {
+            const actionResult = await dispatch(deleteCategoria(id));
+            unwrapResult(actionResult);
+            Notify("Categoria Elinado Exitosamente", "", "success");
+            handleCloseAction();
+          } catch (error) {
+            if (error.itemsAsociados) {
+              Notify("Error al Eliminar Categoria", "", "fail");
+              setItemsImp(error.itemsAsociados);
+              setPNotice(true);
+            }
           }
+          setPActions(false);
         }
-        setPActions(false);
       },
     });
   };
@@ -161,7 +161,9 @@ const Categorias = () => {
       {PActions && (
         <Portal onClose={handleCloseAction}>
           <div className="portal-action-categoria">
-            <span>Categoria : {rowPick.name.toUpperCase()}</span>
+            <span className="title">
+              Categoria : {rowPick.name.toUpperCase()}
+            </span>
             <div className="action">
               <Button
                 type="submit"
@@ -171,7 +173,7 @@ const Categorias = () => {
                   setPActions(false);
                 }}
               >
-                Actualizar Categoria
+                Actualizar
               </Button>
 
               <Button
@@ -179,7 +181,7 @@ const Categorias = () => {
                 style={{ background: "#e76565" }}
                 onClick={() => handleDeleteCategoria(rowPick._id)}
               >
-                Eliminar Categoria
+                Eliminar
               </Button>
             </div>
           </div>

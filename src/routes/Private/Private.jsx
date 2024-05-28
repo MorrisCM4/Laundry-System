@@ -9,8 +9,8 @@ import {
 } from "../../pages/private/coord/index";
 
 import {
-  AddOrderService_Delivery,
-  AddOrderService_Tienda,
+  AddOrderService_RDelivery,
+  AddOrderService_R,
 } from "../../pages/private/coord/OrdenServicio/Add/index";
 
 import Imprimir from "../../pages/private/coord/OrdenServicio/Actions/Imprimir/Imprimir";
@@ -32,18 +32,21 @@ import RAlmacen from "../../pages/private/admin/Reportes/Almacen/Almacen";
 import RGasto from "../../pages/private/admin/Reportes/Gastos/Gasto";
 import RCuadreCaja from "../../pages/private/admin/Reportes/CuadreCaja/CuadreCaja";
 import RItems from "../../pages/private/admin/Reportes/Items/Items";
+import RAnulados from "../../pages/private/admin/Reportes/Anulados/Anulados";
 
 import Setting from "../../pages/private/admin/Setting/Setting";
 import SUsuarios from "../../pages/private/admin/Setting/Usuarios/Usuarios";
-import SPrices from "../../pages/private/admin/Setting/Prices/Prices";
 import SNegocio from "../../pages/private/admin/Setting/Negocio/Negocio";
 import SPoints from "../../pages/private/admin/Setting/Points/Points";
 import SImpuestos from "../../pages/private/admin/Setting/Impuestos/Impuestos";
 import SMetas from "../../pages/private/admin/Setting/Metas/Metas";
 import SProductos from "../../pages/private/admin/Setting/Portafolio/Productos/Productos";
 import SServicios from "../../pages/private/admin/Setting/Portafolio/Servicios/Servicios";
-import SGastos from "../../pages/private/admin/Setting/Gastos/Gastos";
+import STipoGastos from "../../pages/private/admin/Setting/TipoGastos/TipoGastos";
 import SCategorias from "../../pages/private/admin/Setting/Categorias/Categorias";
+import Personal from "../../pages/private/coord/Personal/Personal";
+import Asistencia from "../../pages/private/coord/Personal/Asistencia/Asistencia";
+import NewDesignList from "../../pages/private/coord/OrdenServicio/List/NewDesignList";
 
 const Private = () => {
   return (
@@ -57,6 +60,7 @@ const Private = () => {
         <Route
           path={PrivateRoutes.LIST_ORDER_SERVICE}
           element={<ListOrdenService />}
+          // element={<NewDesignList />}
         />
         {/* PAGES ADMINISTRADOR O PAGES GERENTE */}
         <Route element={<RoleGuard rol={Roles.GERENTE} />}>
@@ -64,7 +68,6 @@ const Private = () => {
           {/* <Route path={PrivateRoutes.GRAFICOS} element={<Graficos />} /> */}
           <Route path={PrivateRoutes.SETTING} element={<Setting />} />
           <Route path={PrivateRoutes.SETTING_USERS} element={<SUsuarios />} />
-          <Route path={PrivateRoutes.SETTING_PRICES} element={<SPrices />} />
           <Route path={PrivateRoutes.SETTING_BUSINESS} element={<SNegocio />} />
           <Route path={PrivateRoutes.SETTING_POINT} element={<SPoints />} />
           <Route path={PrivateRoutes.SETTING_TAXES} element={<SImpuestos />} />
@@ -77,7 +80,10 @@ const Private = () => {
             path={PrivateRoutes.SETTING_SERVICIOS}
             element={<SServicios />}
           />
-          <Route path={PrivateRoutes.SETTING_GASTOS} element={<SGastos />} />
+          <Route
+            path={PrivateRoutes.SETTING_TIPO_GASTOS}
+            element={<STipoGastos />}
+          />
           <Route
             path={PrivateRoutes.SETTING_CATEGORIAS}
             element={<SCategorias />}
@@ -97,20 +103,29 @@ const Private = () => {
             element={<RCuadreCaja />}
           />
           <Route path={PrivateRoutes.REPORTE_PRODUCTOS} element={<RItems />} />
+          <Route
+            path={PrivateRoutes.REPORTE_ANULADOS}
+            element={<RAnulados />}
+          />
         </Route>
         {/* PAGES COORDINADOR */}
         <Route element={<RoleGuard rol={Roles.COORD} />}>
+          <Route
+            path={`${PrivateRoutes.ASISTENCIA}/:id`}
+            element={<Asistencia />}
+          />
+          <Route path={`${PrivateRoutes.PERSONAL}`} element={<Personal />} />
           <Route
             path={`${PrivateRoutes.EDIT_ORDER_SERVICE}/:id`}
             element={<EditOrdenService />}
           />
           <Route
-            path={PrivateRoutes.REGISTER_TIENDA}
-            element={<AddOrderService_Tienda />}
+            path={PrivateRoutes.REGISTER}
+            element={<AddOrderService_R />}
           />
           <Route
             path={PrivateRoutes.REGISTER_DELIVERY}
-            element={<AddOrderService_Delivery />}
+            element={<AddOrderService_RDelivery />}
           />
           <Route
             path={`${PrivateRoutes.FINISH_ORDEN_SERVICE_PENDING}/:id`}

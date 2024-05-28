@@ -36,7 +36,7 @@ const Setting = () => {
           <div className="img">
             <img src={userSetting} alt="" />
           </div>
-          <div>
+          <div className="info-desc">
             <h1>Ajuste de Usuarios</h1>
             <p>Realiza Eliminacion, Actualizacion y Agregar nuevo usuario</p>
           </div>
@@ -48,7 +48,7 @@ const Setting = () => {
           <div className="img">
             <img src={businessSetting} alt="" />
           </div>
-          <div>
+          <div className="info-desc">
             <h1>Ajuste del Negocio</h1>
             <p>Cambios de horarios, nombre del negocio , direccion</p>
           </div>
@@ -62,6 +62,15 @@ const Setting = () => {
             <p>Realiza Actualizacion en precios por defecto de prendas y Delivery</p>
           </div>
         </Link> */}
+        {/* <Link onClick={() => setPActions(true)} className="tag-setting">
+          <div className="img">
+            <img src={portafolioSetting} alt="" />
+          </div>
+          <div>
+            <h1>Servicios</h1>
+            <p>Realiza Registros y Actualizacion de Servicios </p>
+          </div>
+        </Link> */}
         <Link
           to={`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SETTING_SERVICIOS}`}
           className="tag-setting"
@@ -69,20 +78,14 @@ const Setting = () => {
           <div className="img">
             <img src={portafolioSetting} alt="" />
           </div>
-          <div>
-            <h1>Servicios</h1>
-            <p>Realiza Actualizacion y Registros de nuevos Servicios</p>
+          <div className="info-desc">
+            <h1>Ajustes de Servicios</h1>
+            <p>
+              Realiza nuevos Registros y Actualizacion de Servicios, pecios,
+              nombres y asignacion de categorias
+            </p>
           </div>
         </Link>
-        {/* <Link onClick={() => setPActions(true)} className="tag-setting">
-          <div className="img">
-            <img src={portafolioSetting} alt="" />
-          </div>
-          <div>
-            <h1>Productos y Servicios</h1>
-            <p>Realiza Registros y Abastecimiento de Stock en Productos </p>
-          </div>
-        </Link> */}
         <Link
           to={`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SETTING_CATEGORIAS}`}
           className="tag-setting"
@@ -90,26 +93,26 @@ const Setting = () => {
           <div className="img">
             <img src={categoriasSetting} alt="" />
           </div>
-          <div>
+          <div className="info-desc">
             <h1>Categorias</h1>
             <p>
-              Realiza Registros , Actualizaciones en Categorias de Productos y
+              Realiza Registros , Actualizaciones en Categorias para los
               Servicios
             </p>
           </div>
         </Link>
-        {/* <Link
-          to={`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SETTING_GASTOS}`}
+        <Link
+          to={`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SETTING_TIPO_GASTOS}`}
           className="tag-setting"
         >
           <div className="img">
             <img src={GastosSetting} alt="" />
           </div>
           <div>
-            <h1>Gastos</h1>
+            <h1>Tipos de Gastos</h1>
             <p>Realiza Registros, Actualizaciones de gastos recurrentes </p>
           </div>
-        </Link> */}
+        </Link>
         <Link
           to={`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SETTING_POINT}`}
           className="tag-setting"
@@ -117,7 +120,7 @@ const Setting = () => {
           <div className="img">
             <img src={pointsSetting} alt="" />
           </div>
-          <div>
+          <div className="info-desc">
             <h1>Ajuste de Puntos</h1>
             <p>
               Actualiza el valor de puntos, "Donde "x" cantidad de {nameMoneda}{" "}
@@ -132,7 +135,7 @@ const Setting = () => {
           <div className="img">
             <img src={impuestoSetting} alt="" />
           </div>
-          <div>
+          <div className="info-desc">
             <h1>Ajuste de Impuesto</h1>
             <p>Actualiza el valor del {nameImpuesto}, en porcentaje</p>
           </div>
@@ -144,13 +147,13 @@ const Setting = () => {
           <div className="img">
             <img src={metasSetting} alt="" />
           </div>
-          <div>
+          <div className="info-desc">
             <h1>Ajuste de Metas</h1>
             <p>Actualiza el valor de la (Meta Mensual)</p>
           </div>
         </Link>
       </div>
-      {/* {PActions && (
+      {PActions && (
         <Portal
           onClose={() => {
             setPActions(false);
@@ -160,9 +163,12 @@ const Setting = () => {
             <div className="portal-redirect-ps">
               <Button
                 type="submit"
-                style={{ background: '#339af0' }}
+                style={{ background: "#339af0" }}
                 onClick={() => {
-                  navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SETTING_PRODUCTOS}`, { replace: true });
+                  navigate(
+                    `/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SETTING_PRODUCTOS}`,
+                    { replace: true }
+                  );
                   // setPActions(false)
                 }}
               >
@@ -191,7 +197,7 @@ const Setting = () => {
             </div>
           )}
         </Portal>
-      )} */}
+      )}
     </div>
   );
 };
